@@ -7,6 +7,7 @@ public class Alumno {
     private String nombre;
     private String apellido;
     private Examen examenes[];
+    private int cantExamRendidos;
     
     public Alumno(){
         legajo=nro;
@@ -37,8 +38,11 @@ public class Alumno {
     public String getApellido(){
         return apellido;
     }
+    public int cantidadExamenesRendidos(){
+        return cantExamRendidos;
+    }
     public String toString(){
-        return "Legajo Nº: "+legajo+", Nombre: "+nombre+", Apellido: "+apellido+"\n"+getExamenes();
+        return "Legajo Nº: "+legajo+", Nombre: "+nombre+", Apellido: "+apellido+", Examenes rendidos: "+cantExamRendidos+"\n"+getExamenes();
     }
     
     public boolean addExamen(Examen e){
@@ -47,6 +51,7 @@ public class Alumno {
             for(int i=0;i<examenes.length;i++)
                 if(examenes[i]==null){
                     examenes[i]=e;
+                    cantExamRendidos++;
                     aux=true;
                     break;
                 }
@@ -68,6 +73,7 @@ public class Alumno {
         for(int i=0;i<examenes.length;i++)
             if(examenes[i]!=null&&examenes[i].getNroExamen()==nroExamen){
                 examenes[i]=null;
+                cantExamRendidos--;
                 aux=true;
                 break;
             }
@@ -88,14 +94,12 @@ public class Alumno {
     
     public double notaPromedio(){
         double aux=0d;
-        int cont=0;
         for(int i=0;i<examenes.length;i++)
             if(examenes[i]!=null){
-                cont++;
                 aux+=examenes[i].getNota();
             }
-        if(cont!=0)
-            return aux/cont;
+        if(cantExamRendidos!=0)
+            return aux/cantExamRendidos;
         else
             return 0d;
     }
@@ -116,27 +120,21 @@ public class Alumno {
         return aux;
     }
     public int difMayMen(){
-        int cont=0;
-        int dif=mayorNota()-menorNota();
-        for(int i=0;i<examenes.length;i++)
-            if(examenes[i]!=null)
-                cont++;
-        if(cont<2)
-            dif=0;
+        int dif=-1;
+        if(cantExamRendidos>=2)
+            dif=mayorNota()-menorNota();
         return dif;
     }
     public double porcAprobacion(){
         double porc=0d;
-        int contExam=0;
         int contAprob=0;
-        for(int i=0;i<examenes.length;i++)
-            if(examenes[i]!=null){
-                contExam++;
-                if(examenes[i].aprobado())
-                    contAprob++;
-            }
-        if(contExam!=0)
-            porc=contAprob*100/contExam;
+        if(cantExamRendidos!=0){
+            for(int i=0;i<examenes.length;i++)
+                if(examenes[i]!=null)
+                    if(examenes[i].aprobado())
+                        contAprob++;
+            porc=contAprob*100/cantExamRendidos;
+        }
         return (double)porc;
     }
     public String getExamenes(){
